@@ -32,7 +32,7 @@
             <div class="md:w-1/2 flex justify-center">
                 <div class="relative">
                     <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-2xl opacity-50"></div>
-                    <img src="{{ asset('shopping.webp') }}" alt="Mobiles" class="relative z-10 w-full max-w-md object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl rounded-2xl">
+                    <img src="{{ asset('shopping.png') }}" alt="Mobiles" class="relative z-10 w-full max-w-md object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl rounded-2xl">
                  <!-- Floating Badge -->
                     <div class="absolute -bottom-6 -left-6 md:-left-12 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl shadow-xl z-20 animate-bounce hover:animate-none transition-all duration-300">
                         <div class="flex items-center gap-3">

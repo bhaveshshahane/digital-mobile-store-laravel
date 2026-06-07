@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'KART - Payment Details')
+@section('title', 'phoneKART - Payment Details')
 
 @section('content')
 <!-- Header Banner -->

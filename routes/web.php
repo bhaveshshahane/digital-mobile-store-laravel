@@ -46,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/online-payment', [CheckoutController::class, 'onlinePayment'])->name('checkout.online');
     Route::post('/online-payment/process', [CheckoutController::class, 'processOnlinePayment'])->name('checkout.online.process');
     Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
+    
+    // Orders
+    Route::get('/my-orders', [\App\Http\Controllers\OrderController::class, 'myOrders'])->name('orders.my');
 });
 
 // Admin Protected Routes
