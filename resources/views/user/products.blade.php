@@ -1,0 +1,111 @@
+@extends('layouts.app')
+
+@section('title', 'KART - Products')
+
+@section('content')
+<!-- Header Banner -->
+<section class="bg-gradient-to-r from-blue-700 via-indigo-600 to-cyan-600 py-12 relative overflow-hidden">
+    <div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:32px_32px]"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-100">Collection</span></h1>
+        <p class="text-white/80 max-w-2xl mx-auto">Discover the latest and greatest in mobile technology.</p>
+    </div>
+</section>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8 items-start">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-72 flex-shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-24">
+        <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+            <h2 class="text-lg font-bold text-slate-800">Filters</h2>
+        </div>
+
+        <form method="GET" action="{{ route('products.index') }}" class="space-y-5">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Category</label>
+                <div class="relative">
+                    <select name="category" class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none transition-all cursor-pointer">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Price Range</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" name="min" placeholder="Min ₹" value="{{ request('min') }}" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-slate-400 text-sm">
+                    <span class="text-slate-400">-</span>
+                    <input type="number" name="max" placeholder="Max ₹" value="{{ request('max') }}" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-slate-400 text-sm">
+                </div>
+            </div>
+
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
+
+            <div class="pt-2">
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-lg shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all duration-200">
+                    Apply Filters
+                </button>
+                <a href="{{ route('products.index') }}" class="block text-center mt-3 text-sm font-medium text-slate-500 hover:text-rose-500 transition-colors">
+                    Clear All
+                </a>
+            </div>
+        </form>
+    </aside>
+
+    <!-- Product Grid -->
+    <div class="flex-1 w-full">
+        @if(request('search') || request('category') || request('min') || request('max'))
+            <div class="mb-6 flex items-center justify-between">
+                <p class="text-slate-600 font-medium">Showing results for your filters</p>
+            </div>
+        @endif
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            @forelse($products as $product)
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                    <div class="h-48 bg-slate-50 rounded-xl mb-4 p-4 overflow-hidden flex items-center justify-center group-hover:bg-blue-50/50 transition-colors duration-300 relative">
+                        @if($product->image)
+                            <img src="{{ asset('image/'.$product->image) }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                        @else
+                            <svg class="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        @endif
+                    </div>
+                    
+                    <h4 class="text-lg font-bold text-slate-800 line-clamp-1 mb-1" title="{{ $product->name }}">{{ $product->name }}</h4>
+                    <div class="text-xl font-black text-blue-600 mb-4">₹{{ number_format($product->price, 2) }}</div>
+                    
+                    <form action="{{ route('cart.add') }}" method="POST" class="mt-auto" @guest onsubmit="event.preventDefault(); toastr.error('Please login first to add items to your cart.');" @endguest>
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <button type="submit" class="w-full py-2.5 bg-slate-100 text-blue-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+                            <svg class="w-5 h-5 transition-transform group-hover/btn:-rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            @empty
+                <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-100 border-dashed">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">No Products Found</h3>
+                    <p class="text-slate-500 mb-6">We couldn't find any products matching your current filters.</p>
+                    <a href="{{ route('products.index') }}" class="inline-flex items-center justify-center px-6 py-2.5 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors">
+                        Clear Filters
+                    </a>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</div>
+@endsection

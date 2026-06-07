@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Toastr Custom Theme Override */
+#toast-container > .toast-success {
+    background-color: #3b82f6 !important; /* Tailwind blue-500 */
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+#toast-container > .toast-error {
+    background-color: #f43f5e !important; /* Tailwind rose-500 */
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3) !important;
+}
+
+#toast-container .toast {
+    border-radius: 8px !important;
+    opacity: 1 !important;
+}
