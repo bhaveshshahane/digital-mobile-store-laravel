@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\VerificationController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/about', 'about')->name('about');
@@ -22,6 +23,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Email Verification
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 Route::get('/products', [ShopController::class, 'index'])->name('products.index');
 
@@ -38,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment', [CheckoutController::class, 'payment'])->name('checkout.payment');
     Route::post('/payment', [CheckoutController::class, 'processPayment'])->name('checkout.process');
     Route::get('/online-payment', [CheckoutController::class, 'onlinePayment'])->name('checkout.online');
+    Route::post('/online-payment/process', [CheckoutController::class, 'processOnlinePayment'])->name('checkout.online.process');
     Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 

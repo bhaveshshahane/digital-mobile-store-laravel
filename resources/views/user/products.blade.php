@@ -12,9 +12,9 @@
     </div>
 </section>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8 items-start">
+<div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8 items-start">
     <!-- Sidebar -->
-    <aside class="w-full md:w-72 flex-shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-24">
+    <aside class="w-full md:w-72 flex-shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:sticky md:top-24">
         <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
             <h2 class="text-lg font-bold text-slate-800">Filters</h2>

@@ -46,6 +46,21 @@ class CartController extends Controller
 
         Cart::where('id', $request->cart_id)->where('user_id', Auth::id())->update(['quantity' => $request->qty]);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $cartItems = Cart::with('product')->where('user_id', Auth::id())->get();
+            $grandTotal = $cartItems->sum(function($item) {
+                return $item->product->price * $item->quantity;
+            });
+            $item = Cart::with('product')->find($request->cart_id);
+            $itemTotal = $item->product->price * $item->quantity;
+
+            return response()->json([
+                'success' => true,
+                'item_total' => $itemTotal,
+                'grand_total' => $grandTotal
+            ]);
+        }
+
         return redirect()->route('cart.index')->with('success', 'Cart updated!');
     }
 

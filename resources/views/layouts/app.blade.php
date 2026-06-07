@@ -64,48 +64,50 @@
                 @endauth
             </div>
             
-            <!-- Mobile Menu Button (Optional, not fully implemented for brevity) -->
+            <!-- Mobile Menu Button -->
             <div class="md:hidden flex items-center">
-                <button class="text-slate-600 hover:text-blue-600 focus:outline-none">
+                <button id="mobile-menu-btn" class="text-slate-600 hover:text-blue-600 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-200 shadow-lg absolute w-full left-0">
+        <div class="px-4 pt-2 pb-4 space-y-1">
+            <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Home</a>
+            <a href="{{ route('products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Products</a>
+            <a href="{{ route('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">About</a>
+            <a href="{{ route('contact') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Contact</a>
+            
+            <div class="border-t border-slate-200 my-2"></div>
+            
+            @auth
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Admin Dashboard</a>
+                @endif
+                <div class="block px-3 py-2 rounded-md text-base font-medium text-slate-700">
+                    <div class="flex items-center gap-2">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->fname) }}&background=eff6ff&color=2563eb" alt="User" class="w-8 h-8 rounded-full border border-blue-200">
+                        <span>{{ auth()->user()->fname }}</span>
+                    </div>
+                </div>
+                <a href="{{ route('cart.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Cart</a>
+                <form action="{{ route('logout') }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="block w-full text-center mt-4 px-6 py-2.5 border border-transparent text-base font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md transition-colors">
+                    Sign In / Sign Up
+                </a>
+            @endauth
+        </div>
+    </div>
 </header>
 
-<!-- Flash Messages -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-    @if(session('error'))
-        <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-md shadow-sm mb-4">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-rose-700 font-medium">{{ session('error') }}</p>
-                </div>
-            </div>
-        </div>
-    @endif
 
-    @if(session('success'))
-        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-md shadow-sm mb-4">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-emerald-700 font-medium">{{ session('success') }}</p>
-                </div>
-            </div>
-        </div>
-    @endif
-</div>
 
 <main class="flex-grow">
     @yield('content')
@@ -126,6 +128,26 @@
         "progressBar": true,
         "positionClass": "toast-top-right",
     };
+
+    @if(session('success'))
+        toastr.success("{{ session('success') }}");
+    @endif
+
+    @if(session('error'))
+        toastr.error("{{ session('error') }}");
+    @endif
+
+    // Mobile Menu Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    });
 </script>
 @yield('scripts')
 </body>

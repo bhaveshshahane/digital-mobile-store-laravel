@@ -22,6 +22,20 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            if (!Auth::user()->hasVerifiedEmail()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You need to verify your email address to login. Please check your inbox.'
+                    ], 403);
+                }
+                return back()->with('error', 'You need to verify your email address to login. Please check your inbox.');
+            }
+
             $request->session()->regenerate();
             
             if ($request->ajax()) {
@@ -70,20 +84,17 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
-        Auth::login($user);
+        event(new \Illuminate\Auth\Events\Registered($user));
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Registration successful! Redirecting...',
-                'redirect' => route('home')
+                'message' => 'Registration successful! Please check your email for a verification link.',
+                'redirect' => route('login')
             ]);
         }
 
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard')->with('success', '✅ Registered Successfully');
-        }
-        return redirect()->route('home')->with('success', '✅ Registered Successfully');
+        return redirect()->route('login')->with('success', 'Registration successful! Please check your email for a verification link.');
     }
 
     public function logout(Request $request)
