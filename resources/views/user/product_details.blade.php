@@ -71,7 +71,11 @@
                 </div>
 
                 <div class="prose prose-slate prose-sm mb-8">
-                    <p>{{ $product->description ?: 'No description available for this product.' }}</p>
+                    @if($product->description)
+                        {!! $product->description !!}
+                    @else
+                        <p>No description available for this product.</p>
+                    @endif
                 </div>
 
                 <div class="mt-auto">

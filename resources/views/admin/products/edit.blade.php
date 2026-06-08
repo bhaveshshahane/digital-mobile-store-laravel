@@ -59,7 +59,7 @@
             <!-- Description -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                <textarea name="description" rows="4" placeholder="Briefly describe the product features..."
+                <textarea name="description" rows="10" placeholder="Briefly describe the product features..."
                     class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 resize-none">{{ old('description', $product->description) }}</textarea>
                 <span class="text-xs text-rose-500 mt-1 hidden error-msg" id="error-description"></span>
             </div>
@@ -104,7 +104,20 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<!-- TinyMCE -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
+    tinymce.init({
+        selector: 'textarea[name="description"]',
+        menubar: false,
+        plugins: 'lists link code',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link | code',
+        setup: function (editor) {
+            editor.on('change', function () {
+                tinymce.triggerSave();
+            });
+        }
+    });
     const originalImage = "{{ $product->image ? asset('image/'.$product->image) : '' }}";
 
     function previewImage(event){
@@ -175,6 +188,12 @@
             submitHandler: function(form) {
                 let $btn = $('#submitBtn');
                 let originalContent = $btn.html();
+                
+                // Ensure TinyMCE content is saved to textarea before serializing
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
+                
                 let formData = new FormData(form);
 
                 // Reset server errors
