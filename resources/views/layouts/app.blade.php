@@ -55,6 +55,9 @@
                 <!-- User Area -->
                 <div class="hidden md:flex items-center space-x-4">
                     @auth
+                        @php
+                            $cartCount = \App\Models\Cart::where('user_id', auth()->id())->count();
+                        @endphp
                         @if (auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}"
                                 class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Admin
@@ -67,6 +70,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
+                            <span id="desktop-cart-count" class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full {{ $cartCount > 0 ? '' : 'hidden' }}">
+                                {{ $cartCount }}
+                            </span>
                         </a>
                         <!-- User Profile Dropdown -->
                         <div class="relative group" id="user-dropdown-container">
@@ -142,7 +148,12 @@
                             Dashboard</a>
                     @endif
                     <a href="{{ route('cart.index') }}"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">Cart</a>
+                        class="px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors flex justify-between items-center">
+                        Cart
+                        <span id="mobile-cart-count" class="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full {{ $cartCount > 0 ? '' : 'hidden' }}">
+                            {{ $cartCount }}
+                        </span>
+                    </a>
 
                     <div class="block px-3 py-2 rounded-md text-base font-medium text-slate-700">
                         <div class="flex items-center gap-2">
@@ -222,6 +233,47 @@
                     }
                 });
             }
+
+            // Global AJAX Add to Cart handler
+            $(document).on('submit', '.add-to-cart-form', function(e) {
+                @guest
+                // Do nothing if guest, the inline onsubmit will handle showing the toast
+                return;
+                @else
+                e.preventDefault();
+                let form = $(this);
+                let url = form.attr('action');
+                let formData = form.serialize();
+                let btn = form.find('button[type="submit"]');
+                let originalContent = btn.html();
+
+                // Loading state
+                btn.html('<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Adding...</span>');
+                btn.prop('disabled', true);
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            if (response.cart_count > 0) {
+                                $('#desktop-cart-count').text(response.cart_count).removeClass('hidden');
+                                $('#mobile-cart-count').text(response.cart_count).removeClass('hidden');
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Something went wrong. Please try again.');
+                    },
+                    complete: function() {
+                        btn.html(originalContent);
+                        btn.prop('disabled', false);
+                    }
+                });
+                @endguest
+            });
         });
     </script>
     @yield('scripts')

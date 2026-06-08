@@ -40,7 +40,15 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product Added Successfully ✅');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product Added Successfully',
+                'redirect' => route('admin.products.index')
+            ]);
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Product Added Successfully');
     }
 
     public function edit($id)
@@ -71,13 +79,29 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product Updated Successfully ✅');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product Updated Successfully',
+                'redirect' => route('admin.products.index')
+            ]);
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Product Updated Successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Product Deleted Successfully ✅');
+        
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product Deleted Successfully'
+            ]);
+        }
+        
+        return redirect()->route('admin.products.index')->with('success', 'Product Deleted Successfully');
     }
 }

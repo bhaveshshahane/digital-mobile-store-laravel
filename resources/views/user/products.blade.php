@@ -12,7 +12,7 @@
     </div>
 </section>
 
-<div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8 items-start">
+<div class="px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-8 items-start">
     <!-- Sidebar -->
     <aside class="w-full md:w-72 flex-shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:sticky md:top-24">
         <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
@@ -70,7 +70,7 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($products as $product)
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
                     <div class="h-48 bg-slate-50 rounded-xl mb-4 p-4 overflow-hidden flex items-center justify-center group-hover:bg-blue-50/50 transition-colors duration-300 relative">
@@ -79,18 +79,35 @@
                         @else
                             <svg class="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         @endif
+                        
+                        @if($product->stock <= 0)
+                            <div class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
+                                Out of Stock
+                            </div>
+                        @else
+                            <div class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
+                                In Stock: {{ $product->stock }}
+                            </div>
+                        @endif
                     </div>
                     
                     <h4 class="text-lg font-bold text-slate-800 line-clamp-1 mb-1" title="{{ $product->name }}">{{ $product->name }}</h4>
                     <div class="text-xl font-black text-blue-600 mb-4">₹{{ number_format($product->price, 2) }}</div>
                     
-                    <form action="{{ route('cart.add') }}" method="POST" class="mt-auto" @guest onsubmit="event.preventDefault(); toastr.error('Please login first to add items to your cart.');" @endguest>
+                    <form action="{{ route('cart.add') }}" method="POST" class="mt-auto add-to-cart-form" @guest onsubmit="event.preventDefault(); toastr.error('Please login first to add items to your cart.');" @endguest>
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <button type="submit" class="w-full py-2.5 bg-slate-100 text-blue-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn">
-                            <svg class="w-5 h-5 transition-transform group-hover/btn:-rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            Add to Cart
-                        </button>
+                        @if($product->stock <= 0)
+                            <button type="button" disabled class="w-full py-2.5 bg-slate-100 text-slate-400 font-bold rounded-lg cursor-not-allowed flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>Out of Stock</span>
+                            </button>
+                        @else
+                            <button type="submit" class="w-full py-2.5 bg-slate-100 text-blue-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+                                <svg class="w-5 h-5 transition-transform group-hover/btn:-rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                <span>Add to Cart</span>
+                            </button>
+                        @endif
                     </form>
                 </div>
             @empty

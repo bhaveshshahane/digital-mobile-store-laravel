@@ -160,7 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     toastr.success('Cart updated successfully');
                 } else {
-                    toastr.error('Failed to update cart');
+                    toastr.error(data.message || 'Failed to update cart');
+                    if (data.current_qty) {
+                        this.value = data.current_qty;
+                    }
                     if(itemTotalEl) itemTotalEl.style.opacity = '1';
                 }
             })

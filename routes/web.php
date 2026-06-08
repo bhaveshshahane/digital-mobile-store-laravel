@@ -61,11 +61,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::post('/products/{id}/update', [ProductController::class, 'update'])->name('products.update');
-    Route::get('/products/{id}/delete', [ProductController::class, 'destroy'])->name('products.delete');
+    Route::post('/products/{id}/delete', [ProductController::class, 'destroy'])->name('products.delete');
     
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    
+    // Inquiries
+    Route::get('/inquiries', [\App\Http\Controllers\Admin\InquiryController::class, 'index'])->name('inquiries.index');
 });

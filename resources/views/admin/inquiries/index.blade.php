@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin - Users')
-@section('header', 'All Registered Users')
+@section('title', 'Admin - Enquiries')
+@section('header', 'All Enquiries')
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -55,43 +55,30 @@ table.dataTable thead th, table.dataTable thead td {
 @endsection
 
 @section('content')
-
 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="p-6 overflow-x-auto">
-        <table id="usersTable" class="w-full text-left border-collapse">
+        <table id="inquiriesTable" class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-slate-50 text-slate-600 text-sm">
                     <th class="py-4 px-4 font-semibold border-b border-slate-200 rounded-tl-lg">ID</th>
-                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Customer</th>
-                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Email Address</th>
-                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Role</th>
-                    <th class="py-4 px-4 font-semibold border-b border-slate-200 rounded-tr-lg">Registered At</th>
+                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Name</th>
+                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Email</th>
+                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Subject</th>
+                    <th class="py-4 px-4 font-semibold border-b border-slate-200">Message</th>
+                    <th class="py-4 px-4 font-semibold border-b border-slate-200 rounded-tr-lg">Date</th>
                 </tr>
             </thead>
             <tbody class="text-sm">
-                @foreach($users as $user)
+                @foreach($inquiries as $inquiry)
                 <tr class="border-b border-slate-100 hover:bg-slate-50/80 transition-colors">
-                    <td class="py-3 px-4 text-slate-500 font-medium">#{{ $user->id }}</td>
-                    <td class="py-3 px-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">
-                                {{ strtoupper(substr($user->fname, 0, 1)) }}
-                            </div>
-                            <div>
-                                <p class="font-bold text-slate-800">{{ $user->fname }} {{ $user->lname }}</p>
-                            </div>
-                        </div>
+                    <td class="py-3 px-4 text-slate-500 font-medium">#{{ $inquiry->id }}</td>
+                    <td class="py-3 px-4 font-bold text-slate-800">{{ $inquiry->name }}</td>
+                    <td class="py-3 px-4 text-blue-600">
+                        <a href="mailto:{{ $inquiry->email }}">{{ $inquiry->email }}</a>
                     </td>
-                    <td class="py-3 px-4 text-slate-600 font-medium">{{ $user->email }}</td>
-                    <td class="py-3 px-4">
-                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-xs font-semibold shadow-sm flex items-center w-max gap-1">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            Customer
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-slate-500">
-                        {{ $user->created_at ? $user->created_at->format('M d, Y') : 'N/A' }}
-                    </td>
+                    <td class="py-3 px-4 font-medium text-slate-700 max-w-xs truncate" title="{{ $inquiry->subject }}">{{ $inquiry->subject }}</td>
+                    <td class="py-3 px-4 text-slate-500 max-w-md truncate" title="{{ $inquiry->message }}">{{ $inquiry->message }}</td>
+                    <td class="py-3 px-4 text-slate-500 font-medium">{{ $inquiry->created_at ? $inquiry->created_at->format('M d, Y h:i A') : 'N/A' }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -105,11 +92,12 @@ table.dataTable thead th, table.dataTable thead td {
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#usersTable').DataTable({
+        $('#inquiriesTable').DataTable({
             responsive: true,
+            order: [[0, 'desc']], // Sort by ID descending
             language: {
-                search: "Search Users:",
-                lengthMenu: "Show _MENU_ users"
+                search: "Search Enquiries:",
+                lengthMenu: "Show _MENU_ entries"
             }
         });
     });

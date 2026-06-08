@@ -40,6 +40,13 @@ class CheckoutController extends Controller
                 'qty' => $item->quantity,
                 'price' => $item->product->price
             ]);
+
+            // Update product stock
+            if ($item->product->stock >= $item->quantity) {
+                $item->product->decrement('stock', $item->quantity);
+            } else {
+                $item->product->update(['stock' => 0]);
+            }
         }
 
         // Clear Cart
