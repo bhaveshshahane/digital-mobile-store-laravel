@@ -12,7 +12,7 @@ class ShopController extends Controller
     {
         $categories = Category::all();
         
-        $query = Product::with('category');
+        $query = Product::with(['category', 'reviews']);
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
@@ -33,5 +33,18 @@ class ShopController extends Controller
         $products = $query->get();
 
         return view('user.products', compact('products', 'categories'));
+    }
+
+    public function show($id)
+    {
+        $product = Product::with(['category', 'reviews.user'])->findOrFail($id);
+        
+        // Fetch related products from same category (excluding current)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+                                  ->where('id', '!=', $product->id)
+                                  ->take(4)
+                                  ->get();
+                                  
+        return view('user.product_details', compact('product', 'relatedProducts'));
     }
 }

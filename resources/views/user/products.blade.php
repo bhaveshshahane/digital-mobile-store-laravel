@@ -73,25 +73,36 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($products as $product)
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
-                    <div class="h-48 bg-slate-50 rounded-xl mb-4 p-4 overflow-hidden flex items-center justify-center group-hover:bg-blue-50/50 transition-colors duration-300 relative">
-                        @if($product->image)
-                            <img src="{{ asset('image/'.$product->image) }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
-                        @else
-                            <svg class="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        @endif
+                    <a href="{{ route('products.show', $product->id) }}" class="block relative">
+                        <div class="h-48 bg-slate-50 rounded-xl mb-4 p-4 overflow-hidden flex items-center justify-center group-hover:bg-blue-50/50 transition-colors duration-300 relative">
+                            <button type="button" onclick="shareProductUrl(event, '{{ route('products.show', $product->id) }}', '{{ addslashes($product->name) }}')" class="absolute top-2 left-2 p-1.5 bg-white text-slate-500 hover:text-blue-600 rounded-md shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 z-10" title="Share Product">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            </button>
+                            
+                            @if($product->image)
+                                <img src="{{ asset('image/'.$product->image) }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                            @else
+                                <svg class="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            @endif
+                            
+                            @if($product->stock <= 0)
+                                <div class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
+                                    Out of Stock
+                                </div>
+                            @else
+                                <div class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
+                                    In Stock: {{ $product->stock }}
+                                </div>
+                            @endif
+                        </div>
                         
-                        @if($product->stock <= 0)
-                            <div class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
-                                Out of Stock
-                            </div>
-                        @else
-                            <div class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md shadow-sm">
-                                In Stock: {{ $product->stock }}
-                            </div>
-                        @endif
-                    </div>
-                    
-                    <h4 class="text-lg font-bold text-slate-800 line-clamp-1 mb-1" title="{{ $product->name }}">{{ $product->name }}</h4>
+                        <h4 class="text-lg font-bold text-slate-800 line-clamp-1 mb-1 group-hover:text-blue-600 transition-colors" title="{{ $product->name }}">{{ $product->name }}</h4>
+                        <div class="flex items-center gap-1 mb-2">
+                            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                            <span class="text-sm font-bold text-slate-700">{{ number_format($product->averageRating(), 1) }}</span>
+                            <span class="text-xs text-slate-400">({{ $product->reviews->count() }})</span>
+                        </div>
+                    </a>
                     <div class="text-xl font-black text-blue-600 mb-4">₹{{ number_format($product->price, 2) }}</div>
                     
                     <form action="{{ route('cart.add') }}" method="POST" class="mt-auto add-to-cart-form" @guest onsubmit="event.preventDefault(); toastr.error('Please login first to add items to your cart.');" @endguest>
@@ -125,4 +136,26 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function shareProductUrl(e, url, title) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (navigator.share) {
+            navigator.share({
+                title: title + ' on phoneKART',
+                text: 'Check out this amazing product on phoneKART!',
+                url: url,
+            })
+            .catch((error) => console.log('Error sharing', error));
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                toastr.success('Product link copied to clipboard!');
+            });
+        }
+    }
+</script>
 @endsection

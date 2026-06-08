@@ -87,40 +87,76 @@
     </div>
 </div>
 
-<!-- Out of Stock Products -->
-@if(isset($out_of_stock_products) && $out_of_stock_products->count() > 0)
-<div class="mt-6 bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-rose-100 bg-rose-50 flex justify-between items-center">
-        <h4 class="text-lg font-bold text-rose-700 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            Out of Stock Alerts
-        </h4>
-        <span class="px-3 py-1 bg-rose-200 text-rose-800 rounded-full text-xs font-bold">{{ $out_of_stock_products->count() }} items</span>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <!-- Out of Stock Products -->
+    @if(isset($out_of_stock_products) && $out_of_stock_products->count() > 0)
+    <div class="bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden flex flex-col">
+        <div class="px-6 py-4 border-b border-rose-100 bg-rose-50 flex justify-between items-center">
+            <h4 class="text-lg font-bold text-rose-700 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Out of Stock Alerts
+            </h4>
+            <span class="px-3 py-1 bg-rose-200 text-rose-800 rounded-full text-xs font-bold">{{ $out_of_stock_products->count() }} items</span>
+        </div>
+        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+            @foreach($out_of_stock_products as $product)
+                <a href="{{ route('admin.products.edit', $product->id) }}" class="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors group">
+                    @if($product->image)
+                        <img src="{{ asset('image/'.$product->image) }}" class="w-12 h-12 object-contain rounded-lg border border-slate-200 bg-white shadow-sm p-1">
+                    @else
+                        <div class="w-12 h-12 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-slate-400 text-xs shadow-sm">No Img</div>
+                    @endif
+                    <div class="flex-1">
+                        <h5 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $product->name }}</h5>
+                        <p class="text-sm text-slate-500">{{ $product->category->name ?? 'N/A' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-slate-800">₹{{ number_format($product->price, 2) }}</p>
+                        <p class="text-xs font-semibold text-rose-500">Stock: {{ $product->stock }}</p>
+                    </div>
+                    <div class="ml-2 text-slate-300 group-hover:text-blue-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </a>
+            @endforeach
+        </div>
     </div>
-    <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-        @foreach($out_of_stock_products as $product)
-            <a href="{{ route('admin.products.edit', $product->id) }}" class="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors group">
-                @if($product->image)
-                    <img src="{{ asset('image/'.$product->image) }}" class="w-12 h-12 object-contain rounded-lg border border-slate-200 bg-white shadow-sm p-1">
-                @else
-                    <div class="w-12 h-12 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-slate-400 text-xs shadow-sm">No Img</div>
-                @endif
-                <div class="flex-1">
-                    <h5 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $product->name }}</h5>
-                    <p class="text-sm text-slate-500">{{ $product->category->name ?? 'N/A' }}</p>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold text-slate-800">₹{{ number_format($product->price, 2) }}</p>
-                    <p class="text-xs font-semibold text-rose-500">Stock: {{ $product->stock }}</p>
-                </div>
-                <div class="ml-2 text-slate-300 group-hover:text-blue-500 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </div>
-            </a>
-        @endforeach
+    @endif
+
+    <!-- Top Reviewed Products -->
+    @if(isset($top_reviewed_products) && $top_reviewed_products->count() > 0)
+    <div class="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden flex flex-col">
+        <div class="px-6 py-4 border-b border-amber-100 bg-amber-50 flex justify-between items-center">
+            <h4 class="text-lg font-bold text-amber-700 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                Top Reviewed Products
+            </h4>
+        </div>
+        <div class="divide-y divide-slate-100 flex-1 overflow-y-auto">
+            @foreach($top_reviewed_products as $product)
+                <a href="{{ route('products.show', $product->id) }}" target="_blank" class="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors group">
+                    @if($product->image)
+                        <img src="{{ asset('image/'.$product->image) }}" class="w-12 h-12 object-contain rounded-lg border border-slate-200 bg-white shadow-sm p-1">
+                    @else
+                        <div class="w-12 h-12 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-slate-400 text-xs shadow-sm">No Img</div>
+                    @endif
+                    <div class="flex-1">
+                        <h5 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $product->name }}</h5>
+                        <p class="text-sm text-slate-500">{{ $product->category->name ?? 'N/A' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-slate-800">₹{{ number_format($product->price, 2) }}</p>
+                        <p class="text-xs font-semibold text-amber-500">{{ $product->reviews_count }} Reviews</p>
+                    </div>
+                    <div class="ml-2 text-slate-300 group-hover:text-blue-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </div>
+                </a>
+            @endforeach
+        </div>
     </div>
+    @endif
 </div>
-@endif
 @endsection
 
 @section('scripts')

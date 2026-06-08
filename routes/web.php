@@ -30,6 +30,7 @@ Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'
     ->name('verification.verify');
 
 Route::get('/products', [ShopController::class, 'index'])->name('products.index');
+Route::get('/products/{id}', [ShopController::class, 'show'])->name('products.show');
 
 // User Protected Routes
 Route::middleware(['auth'])->group(function () {
@@ -49,6 +50,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Orders
     Route::get('/my-orders', [\App\Http\Controllers\OrderController::class, 'myOrders'])->name('orders.my');
+
+    // Reviews
+    Route::post('/products/{id}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
 });
 
 // Admin Protected Routes
@@ -71,4 +75,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Inquiries
     Route::get('/inquiries', [\App\Http\Controllers\Admin\InquiryController::class, 'index'])->name('inquiries.index');
+
+    // Reviews
+    Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
 });

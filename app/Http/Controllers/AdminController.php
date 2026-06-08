@@ -36,6 +36,11 @@ class AdminController extends Controller
 
         $out_of_stock_products = Product::where('stock', '<=', 0)->get();
 
-        return view('admin.dashboard', compact('total_users', 'total_products', 'total_orders', 'total_sales', 'chartDates', 'chartTotals', 'out_of_stock_products'));
+        $top_reviewed_products = Product::withCount('reviews')
+            ->orderByDesc('reviews_count')
+            ->take(3)
+            ->get();
+
+        return view('admin.dashboard', compact('total_users', 'total_products', 'total_orders', 'total_sales', 'chartDates', 'chartTotals', 'out_of_stock_products', 'top_reviewed_products'));
     }
 }
