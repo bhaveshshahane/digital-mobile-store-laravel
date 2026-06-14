@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'phoneKART')</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -192,6 +193,24 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Global AJAX CSRF setup — attaches the token to every AJAX request header
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Global handler: if any AJAX call gets a 419 (CSRF mismatch), refresh the page
+        $(document).ajaxError(function(event, xhr) {
+            if (xhr.status === 419) {
+                toastr.error('Your session has expired. Refreshing the page...');
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1500);
+            }
+        });
+    </script>
     <script>
         toastr.options = {
             "closeButton": true,
